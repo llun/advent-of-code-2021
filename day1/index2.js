@@ -1,8 +1,9 @@
 const fs = require("fs");
+const path = require("path");
 
 console.log(
   fs
-    .readFileSync("./input.txt")
+    .readFileSync(path.join(__dirname, "input.txt"))
     .toString("utf8")
     .split("\n")
     .map((line) => parseInt(line, 10))
