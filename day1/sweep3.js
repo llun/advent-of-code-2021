@@ -8,13 +8,6 @@ const lines = fs
   .split("\n")
   .map((item) => parseInt(item, 10));
 
-// Common
-function count(lines, diff) {
-  return lines
-    .map((_, index, arr) => arr[index + diff] - arr[index])
-    .filter((item) => item > 0).length;
-}
-
 // Part 1
 console.log(
   lines
@@ -27,8 +20,6 @@ console.log(
     .map((_, index, arr) => arr[index + 1] - arr[index])
     .filter((item) => item > 0).length
 );
-
-console.log(count(lines, 1));
 
 // Part 2
 console.log(
@@ -47,5 +38,3 @@ console.log(
     .map((_, index, arr) => arr[index + 3] - arr[index])
     .filter((item) => item > 0).length
 );
-
-console.log(count(lines, 3));
