@@ -43,4 +43,4 @@ const { aim, position, depth } = input.reduce(
     depth: 0,
   }
 );
-console.log(aim, position, depth, position * depth);
+console.log(position * aim, position * depth);
