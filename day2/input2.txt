@@ -1,0 +1,6 @@
+forward 20
+down 5
+up 2
+forward 3
+down 8
+forward 8
