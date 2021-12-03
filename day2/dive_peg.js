@@ -5,5 +5,5 @@ const input = fs.readFileSync("./input.txt").toString("utf-8");
 const parser = pegjs.generate(
   fs.readFileSync("./dive.pegjs").toString("utf-8")
 );
-const [position, aim, depth] = parser.parse(input);
-console.log(position * aim, position * depth);
+const [part1, part2] = parser.parse(input);
+console.log(part1, part2);
