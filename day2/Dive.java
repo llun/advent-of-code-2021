@@ -2,7 +2,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-record Command(String action, Integer value) {}
+record Command(String action, Integer value) {
+    public static Command fromLineString(String line) {
+        var parts = line.split(" ");
+        return new Command(parts[0], Integer.parseInt(parts[1], 10));
+    }
+}
 record Result(Integer aim, Integer position, Integer depth) {
     public static Result add(Result result, Command command) {
         return switch (command.action()) {
@@ -19,10 +24,7 @@ record Result(Integer aim, Integer position, Integer depth) {
 
 class Dive {
     public static void main(String[] args) throws IOException {
-        var lines = Files.lines(Paths.get("day2/input.txt")).map(line -> {
-           var parts = line.split(" ");
-           return new Command(parts[0], Integer.parseInt(parts[1], 10));
-        });
+        var lines = Files.lines(Paths.get("day2/input.txt")).map(Command::fromLineString);
         var result = lines.reduce(new Result(0,0,0), Result::add, Result::sum);
         System.out.printf("Part1: %d, Part2: %d", result.aim() * result.position(), result.position() * result.depth());
     }
