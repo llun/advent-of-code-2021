@@ -1,5 +1,4 @@
 const fs = require("fs");
-const _ = require("lodash");
 
 const fish = fs
   .readFileSync("./input.txt")
