@@ -30,6 +30,10 @@ const getCost = (n) => {
   return val;
 };
 
+const getCost2 = (n) => {
+  return (n * (n + 1)) / 2;
+};
+
 const findLeastCost2 = (input) => {
   const sortedInput = input.slice(0).sort((a, b) => a - b);
   const min = sortedInput[0];
@@ -38,7 +42,7 @@ const findLeastCost2 = (input) => {
   let leastCost = Number.MAX_SAFE_INTEGER;
   for (let i = min; i <= max; i++) {
     const cost = input.reduce(
-      (sum, val) => sum + getCost(Math.abs(val - i)),
+      (sum, val) => sum + getCost2(Math.abs(val - i)),
       0
     );
     leastCost = cost < leastCost ? cost : leastCost;
