@@ -10,7 +10,6 @@ const map = {
   "{": "}",
   "<": ">",
 };
-const open = new Set(Object.values(map));
 const part1 = (input) => {
   const score = {
     ")": 3,
