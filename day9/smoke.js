@@ -75,5 +75,6 @@ const part2 = (input) => {
   return sorted.slice(0, 3).reduce((a, b) => a * b, 1);
 };
 
+console.log("Part2");
 console.log(part2(getInput("./sample.txt")));
 console.log(part2(getInput("./input.txt")));
