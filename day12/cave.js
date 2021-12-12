@@ -86,8 +86,9 @@ const getInput = (fileName) => {
   return nodes;
 };
 
-const part1 = (input) => {
-  const generatePaths = (current, path = new Path(), allPaths = []) => {
+const generatePaths =
+  (PathClass) =>
+  (current, path = new PathClass(), allPaths = []) => {
     const result = path.visit(current);
     if (!result) {
       if (path.isEnd()) {
@@ -97,13 +98,14 @@ const part1 = (input) => {
     }
 
     for (let neighbour of current.neighbours) {
-      generatePaths(neighbour, new Path(path), allPaths);
+      generatePaths(PathClass)(neighbour, new PathClass(path), allPaths);
     }
     return allPaths;
   };
 
+const part1 = (input) => {
   const map = input;
-  const paths = generatePaths(map.get("start"));
+  const paths = generatePaths(Path)(map.get("start"));
   return paths.length;
 };
 
@@ -114,27 +116,8 @@ console.log(part1(getInput("./sample3.txt")));
 console.log(part1(getInput("./input.txt")));
 
 const part2 = (input) => {
-  const generatePaths = (
-    current,
-    path = new ExtraVisitPath(),
-    allPaths = []
-  ) => {
-    const result = path.visit(current);
-    if (!result) {
-      if (path.isEnd()) {
-        allPaths.push(path);
-      }
-      return;
-    }
-
-    for (let neighbour of current.neighbours) {
-      generatePaths(neighbour, new ExtraVisitPath(path), allPaths);
-    }
-    return allPaths;
-  };
-
   const map = input;
-  const paths = generatePaths(map.get("start"));
+  const paths = generatePaths(ExtraVisitPath)(map.get("start"));
   return paths.length;
 };
 console.log("Path2");
