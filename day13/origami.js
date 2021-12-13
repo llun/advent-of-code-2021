@@ -55,12 +55,8 @@ const part2 = (input) => {
   const afterFold = Array.from(result).map((dot) =>
     dot.split(",").map((val) => parseInt(val))
   );
-  const maxX = afterFold
-    .map((dot) => dot[0])
-    .reduce((max, val) => (val > max ? val : max), Number.MIN_SAFE_INTEGER);
-  const maxY = afterFold
-    .map((dot) => dot[1])
-    .reduce((max, val) => (val > max ? val : max), Number.MIN_SAFE_INTEGER);
+  const maxX = Math.max(...afterFold.map((dot) => dot[0]));
+  const maxY = Math.max(...afterFold.map((dot) => dot[1]));
   const matrix = Array(maxY + 1)
     .fill(".")
     .map(() => Array(maxX + 1).fill(" "));
