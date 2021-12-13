@@ -63,7 +63,7 @@ const part2 = (input) => {
     .reduce((max, val) => (val > max ? val : max), Number.MIN_SAFE_INTEGER);
   const matrix = Array(maxY + 1)
     .fill(".")
-    .map(() => Array(maxX + 1).fill("."));
+    .map(() => Array(maxX + 1).fill(" "));
   for (const dot of afterFold) {
     const [x, y] = dot;
     matrix[y][x] = "#";
