@@ -66,7 +66,7 @@ const part2 = (input) => {
     .map(() => Array(maxX + 1).fill(" "));
   for (const dot of afterFold) {
     const [x, y] = dot;
-    matrix[y][x] = "#";
+    matrix[y][x] = "█";
   }
   return matrix;
 };
