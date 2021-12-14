@@ -61,9 +61,9 @@ const part1 = (input) => {
   return sortedGroup[sortedGroup.length - 1][1] - sortedGroup[0][1];
 };
 
-// console.log("Part1");
-// console.log(part1(getInput("./sample.txt")));
-// console.log(part1(getInput("./input.txt")));
+console.log("Part1");
+console.log(part1(getInput("./sample.txt")));
+console.log(part1(getInput("./input.txt")));
 
 const part2 = (input) => {
   const [sequence, map] = input;
