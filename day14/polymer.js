@@ -1,4 +1,3 @@
-const Buffer = require("buffer");
 const fs = require("fs");
 
 const getInput = (fileName) => {
@@ -39,20 +38,20 @@ const getNextSequence = (sequence, map) => {
 };
 
 const groupByChar = (sequence) => {
-  const group = sequence.split("").reduce((map, char) => {
+  const map = {};
+  for (let i = 0; i < sequence.length; i++) {
+    const char = sequence[i];
     if (!map[char]) map[char] = 0;
     map[char]++;
-    return map;
-  }, {});
-  return group;
+  }
+  return map;
 };
 
 const part1 = (input) => {
   const [sequence, map] = input;
 
   let value = sequence;
-  for (let i = 0; i < 40; i++) {
-    console.log(i);
+  for (let i = 0; i < 10; i++) {
     value = getNextSequence(value, map);
   }
   const group = groupByChar(value);
@@ -106,19 +105,16 @@ const part2 = (input) => {
       if (result.length === 0) result = cache.get(length).get(word);
       else {
         const appender = cache.get(length).get(word);
-        for (let i = 1; i < appender.length; i++) {
-          result += appender[i];
-        }
+        result += appender.slice(1);
       }
       if (end >= sequence.length) break;
       slot = available.length - 1;
     }
-    console.log(hit);
     return result;
   };
 
   let slot = 2;
-  for (let i = 0; i < 24; i++) {
+  for (let i = 0; i < 10; i++) {
     const current = cache.get(slot);
     const nextSlot = Array.from(current.values())[0].length;
     cache.set(
@@ -129,16 +125,78 @@ const part2 = (input) => {
       }, new Map())
     );
     slot = nextSlot;
-    console.log(i);
   }
 
   let val = sequence;
-  for (let i = 0; i < 40; i++) {
-    console.log(i);
+  for (let i = 0; i < 10; i++) {
     val = getNextSequenceWithCache(val, cache);
   }
-  return val;
+
+  const group = groupByChar(val);
+  const sortedGroup = Object.keys(group)
+    .map((key) => [key, group[key]])
+    .sort((a, b) => a[1] - b[1]);
+  return sortedGroup[sortedGroup.length - 1][1] - sortedGroup[0][1];
 };
+
+const part2Map = (input) => {
+  const [sequence, map] = input;
+
+  let starter = sequence.slice(0, 2);
+  const counter = sequence.split("").reduce((out, c, index, arr) => {
+    if (index < 1) return out;
+    const key = [arr[index - 1], arr[index]].join("");
+    if (!out[key]) out[key] = 0;
+    out[key]++;
+    return out;
+  }, {});
+  const spread = Object.keys(map)
+    .map((key) => {
+      const insertion = map[key];
+      return [
+        key,
+        [[key[0], insertion].join(""), [insertion, key[1]].join("")],
+      ];
+    })
+    .reduce((hash, kv) => {
+      hash[kv[0]] = kv[1];
+      return hash;
+    }, {});
+
+  for (let i = 0; i < 40; i++) {
+    starter = starter[0] + map[starter];
+    const changes = Object.keys(counter)
+      .map((key) => {
+        const val = counter[key];
+        return [[key, -val], ...spread[key].map((item) => [item, val])];
+      })
+      .flat();
+
+    for (let change of changes) {
+      const [key, val] = change;
+      const previous = counter[key] || 0;
+      counter[key] = previous + val;
+    }
+  }
+
+  const charCount = starter.split("").reduce((out, item) => {
+    out[item] = 1;
+    return out;
+  }, {});
+  counter[starter] = counter[starter] - 1;
+  for (let key of Object.keys(counter)) {
+    const char = key.split("")[1];
+    const previous = charCount[char] || 0;
+    charCount[char] = previous + counter[key];
+  }
+  const sortedGroup = Object.keys(charCount)
+    .map((key) => [key, charCount[key]])
+    .sort((a, b) => a[1] - b[1]);
+  return sortedGroup[sortedGroup.length - 1][1] - sortedGroup[0][1];
+};
+
 console.log("Part2");
-console.log(part2(getInput("./sample.txt")));
+// console.log(part2(getInput("./sample.txt")));
+console.log(part2Map(getInput("./sample.txt")));
 // console.log(part2(getInput("./input.txt")));
+console.log(part2Map(getInput("./input.txt")));
