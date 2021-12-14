@@ -68,9 +68,9 @@ const part1 = (input) => {
 
 const part2 = (input) => {
   const [sequence, map] = input;
-  const cache = [
-    null,
-    null,
+  const cache = new Map();
+  cache.set(
+    2,
     Object.keys(map)
       .map((pair) => {
         const [first, second] = pair.split("");
@@ -79,24 +79,22 @@ const part2 = (input) => {
       .reduce((out, item) => {
         out[item[0]] = item[1];
         return out;
-      }, {}),
-  ];
+      }, {})
+  );
   const getNextSequenceWithCache = (sequence, cache) => {
-    const available = cache
-      .map((item, index) => (item ? index : 0))
-      .filter((i) => i);
+    const available = Array.from(cache.keys()).sort((a, b) => a - b);
     let slot = available.length - 1;
     let begin = 0;
     let result = "";
     const hit = {};
     while (true) {
       const length = available[slot];
-      if (!cache[length]) {
+      if (!cache.get(length)) {
         slot--;
         continue;
       }
       const word = sequence.substring(begin, begin + length);
-      if (!cache[length][word]) {
+      if (!cache.get(length)[word]) {
         slot--;
         continue;
       }
@@ -105,10 +103,9 @@ const part2 = (input) => {
       hit[length]++;
       const end = begin + length;
       begin = end - 1;
-      const beforeConcat = Date.now();
-      if (result.length === 0) result = cache[length][word];
+      if (result.length === 0) result = cache.get(length)[word];
       else {
-        const appender = cache[length][word];
+        const appender = cache.get(length)[word];
         for (let i = 1; i < appender.length; i++) {
           result += appender[i];
         }
@@ -116,25 +113,28 @@ const part2 = (input) => {
       if (end >= sequence.length) break;
       slot = available.length - 1;
     }
-    if (!cache[sequence.length]) cache[sequence.length] = {};
-    cache[sequence.length][sequence] = result;
-    console.log(hit);
+    if (!cache.has(sequence.length)) cache.set(sequence.length, {});
+    cache.get(sequence.length)[sequence] = result;
     return result;
   };
 
   let slot = 2;
-  for (let i = 0; i < 26; i++) {
-    const nextSlot = Object.values(cache[slot])[0].length;
-    cache[nextSlot] = Object.values(cache[slot]).reduce((out, item) => {
-      out[item] = getNextSequenceWithCache(item, cache);
-      return out;
-    }, {});
+  for (let i = 0; i < 20; i++) {
+    const current = cache.get(slot);
+    const nextSlot = Object.values(current)[0].length;
+    cache.set(
+      nextSlot,
+      Object.values(current).reduce((out, item) => {
+        out[item] = getNextSequenceWithCache(item, cache);
+        return out;
+      }, {})
+    );
     slot = nextSlot;
     console.log(i);
   }
 
   let val = sequence;
-  for (let i = 0; i < 40; i++) {
+  for (let i = 0; i < 4; i++) {
     console.log(i);
     val = getNextSequenceWithCache(val, cache);
   }
