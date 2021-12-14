@@ -77,9 +77,9 @@ const part2 = (input) => {
         return [pair, [first, map[pair], second].join("")];
       })
       .reduce((out, item) => {
-        out[item[0]] = item[1];
+        out.set(item[0], item[1]);
         return out;
-      }, {})
+      }, new Map())
   );
   const getNextSequenceWithCache = (sequence, cache) => {
     const available = Array.from(cache.keys()).sort((a, b) => a - b);
@@ -89,12 +89,12 @@ const part2 = (input) => {
     const hit = {};
     while (true) {
       const length = available[slot];
-      if (!cache.get(length)) {
+      if (!cache.has(length)) {
         slot--;
         continue;
       }
       const word = sequence.substring(begin, begin + length);
-      if (!cache.get(length)[word]) {
+      if (!cache.get(length).has(word)) {
         slot--;
         continue;
       }
@@ -103,9 +103,9 @@ const part2 = (input) => {
       hit[length]++;
       const end = begin + length;
       begin = end - 1;
-      if (result.length === 0) result = cache.get(length)[word];
+      if (result.length === 0) result = cache.get(length).get(word);
       else {
-        const appender = cache.get(length)[word];
+        const appender = cache.get(length).get(word);
         for (let i = 1; i < appender.length; i++) {
           result += appender[i];
         }
@@ -113,28 +113,27 @@ const part2 = (input) => {
       if (end >= sequence.length) break;
       slot = available.length - 1;
     }
-    if (!cache.has(sequence.length)) cache.set(sequence.length, {});
-    cache.get(sequence.length)[sequence] = result;
+    console.log(hit);
     return result;
   };
 
   let slot = 2;
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 24; i++) {
     const current = cache.get(slot);
-    const nextSlot = Object.values(current)[0].length;
+    const nextSlot = Array.from(current.values())[0].length;
     cache.set(
       nextSlot,
-      Object.values(current).reduce((out, item) => {
-        out[item] = getNextSequenceWithCache(item, cache);
+      Array.from(current.values()).reduce((out, item) => {
+        out.set(item, getNextSequenceWithCache(item, cache));
         return out;
-      }, {})
+      }, new Map())
     );
     slot = nextSlot;
     console.log(i);
   }
 
   let val = sequence;
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 40; i++) {
     console.log(i);
     val = getNextSequenceWithCache(val, cache);
   }
