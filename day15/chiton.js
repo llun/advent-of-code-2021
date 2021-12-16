@@ -29,12 +29,6 @@ class Queue {
   }
 }
 
-const manhattan = (origin, target, cost) => {
-  const [x1, y1] = origin;
-  const [x2, y2] = target;
-  return Math.abs(x2 - x1) + Math.abs(y2 - y1);
-};
-
 const part1 = (input) => {
   const matrix = input;
   const start = [0, 0];
@@ -56,9 +50,7 @@ const part1 = (input) => {
       .map((item) => {
         const [x, y] = item;
         const key = item.join(",");
-        const h = manhattan(position, target, matrix[y][x]);
-        const f = matrix[y][x] + cost;
-        const n = f + h;
+        const n = matrix[y][x] + cost;
         if (lowestCostMap.has(key) && lowestCostMap.get(key) < n) return null;
         return [n, [n, totalRisk + matrix[y][x], item]];
       })
@@ -69,14 +61,11 @@ const part1 = (input) => {
   queue.push(0, [0, 0, start]);
   const visited = new Set();
 
-  let i = 0;
   while (queue.length > 0) {
-    i++;
     const head = queue.shift();
     const [, totalRisk, position] = head;
-    if (i % 10000 === 0) console.log(i, totalRisk, lowestCostMap.size);
+    if (visited.has(position.join(","))) continue;
     if (position.join(",") === end.join(",")) {
-      console.log(i, totalRisk);
       return totalRisk;
     }
     visited.add(position.join(","));
@@ -93,11 +82,17 @@ const part1 = (input) => {
 
 console.log("Part1");
 console.log(part1(getInput("./sample.txt")));
-// console.log(part1(getInput("./input.txt")));
+console.log(part1(getInput("./input.txt")));
 
 const part2 = (input) => {
   const increaseInput = (input) =>
-    input.map((row) => row.map((cell) => cell + 1));
+    input.map((row) =>
+      row.map((cell) => {
+        const val = cell + 1;
+        if (val > 9) return 1;
+        return val;
+      })
+    );
 
   const joinMatrixLeft = (matrix1, matrix2) =>
     matrix1.map((row, i) => [...row, ...matrix2[i]]);
@@ -119,5 +114,5 @@ const part2 = (input) => {
 };
 
 console.log("Part2");
-// console.log(part2(getInput("./sample.txt")));
-// console.log(part2(getInput("./input.txt")));
+console.log(part2(getInput("./sample.txt")));
+console.log(part2(getInput("./input.txt")));
