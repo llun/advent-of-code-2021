@@ -32,13 +32,15 @@ class Queue {
 const manhattan = (origin, target, cost) => {
   const [x1, y1] = origin;
   const [x2, y2] = target;
-  return (Math.abs(x2 - x1) + Math.abs(y2 - y1)) * cost;
+  return Math.abs(x2 - x1) + Math.abs(y2 - y1);
 };
 
 const part1 = (input) => {
   const matrix = input;
   const start = [0, 0];
   const end = [matrix[0].length - 1, matrix.length - 1];
+
+  const lowestCostMap = new Map();
 
   const getNeighbourNodeWithCost = (matrix, visited, target, node) => {
     const [cost, totalRisk, position] = node;
@@ -50,37 +52,48 @@ const part1 = (input) => {
     const bottom = y + 1 >= matrix.length ? null : [x, y + 1];
     return [top, left, right, bottom]
       .filter((item) => item)
-      .filter((item) => !visited.has(item.join("")))
+      .filter((item) => !visited.has(item.join(",")))
       .map((item) => {
         const [x, y] = item;
+        const key = item.join(",");
         const h = manhattan(position, target, matrix[y][x]);
         const f = matrix[y][x] + cost;
         const n = f + h;
+        if (lowestCostMap.has(key) && lowestCostMap.get(key) < n) return null;
         return [n, [n, totalRisk + matrix[y][x], item]];
-      });
+      })
+      .filter((item) => item);
   };
 
   const queue = new Queue();
   queue.push(0, [0, 0, start]);
   const visited = new Set();
 
+  let i = 0;
   while (queue.length > 0) {
+    i++;
     const head = queue.shift();
-    const [cost, totalRisk, position] = head;
-    if (position.join("") === end.join("")) {
+    const [, totalRisk, position] = head;
+    if (i % 10000 === 0) console.log(i, totalRisk, lowestCostMap.size);
+    if (position.join(",") === end.join(",")) {
+      console.log(i, totalRisk);
       return totalRisk;
     }
-    visited.add(position.join(""));
+    visited.add(position.join(","));
     const nodes = getNeighbourNodeWithCost(matrix, visited, end, head);
     for (const node of nodes) {
       queue.push(...node);
+
+      const [, vals] = node;
+      const [cost, , pair] = vals;
+      lowestCostMap.set(pair.join(","), cost);
     }
   }
 };
 
 console.log("Part1");
-// console.log(part1(getInput("./sample.txt")));
-console.log(part1(getInput("./input.txt")));
+console.log(part1(getInput("./sample.txt")));
+// console.log(part1(getInput("./input.txt")));
 
 const part2 = (input) => {
   const increaseInput = (input) =>
