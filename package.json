@@ -13,6 +13,7 @@
   },
   "homepage": "https://github.com/llun/advent-of-code-2021#readme",
   "dependencies": {
+    "@tyriar/fibonacci-heap": "^2.0.9",
     "pegjs": "^0.10.0"
   }
 }
