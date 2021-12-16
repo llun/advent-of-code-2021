@@ -29,6 +29,13 @@ class Queue {
   }
 }
 
+const D = 0.0001;
+const h = (node, target) => {
+  const [x, y] = node;
+  const [tx, ty] = target;
+  return (Math.abs(tx - x) + Math.abs(ty - y)) * D;
+};
+
 const part1 = (input) => {
   const matrix = input;
   const start = [0, 0];
@@ -36,7 +43,7 @@ const part1 = (input) => {
 
   const lowestCostMap = new Map();
 
-  const getNeighbourNodeWithCost = (matrix, visited, target, node) => {
+  const getNeighbourNodeWithCost = (matrix, target, node) => {
     const [cost, totalRisk, position] = node;
     const [x, y] = position;
 
@@ -46,11 +53,11 @@ const part1 = (input) => {
     const bottom = y + 1 >= matrix.length ? null : [x, y + 1];
     return [top, left, right, bottom]
       .filter((item) => item)
-      .filter((item) => !visited.has(item.join(",")))
       .map((item) => {
         const [x, y] = item;
         const key = item.join(",");
-        const n = matrix[y][x] + cost;
+        const f = matrix[y][x] + cost;
+        const n = f + h(item, target);
         if (lowestCostMap.has(key) && lowestCostMap.get(key) < n) return null;
         return [n, [n, totalRisk + matrix[y][x], item]];
       })
@@ -69,7 +76,7 @@ const part1 = (input) => {
       return totalRisk;
     }
     visited.add(position.join(","));
-    const nodes = getNeighbourNodeWithCost(matrix, visited, end, head);
+    const nodes = getNeighbourNodeWithCost(matrix, end, head);
     for (const node of nodes) {
       queue.push(...node);
 
