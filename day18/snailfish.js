@@ -93,9 +93,7 @@ function split(array) {
 function add(n1, n2) {
   let result = [n1, n2];
   while (maxLevel(result) === 4 || maxNumber(result) > 9) {
-    while (maxLevel(result) === 4) {
-      result = explode(result);
-    }
+    result = explode(result);
     result = split(result);
   }
 
@@ -107,10 +105,6 @@ function magnitude(array) {
   const leftValue = Array.isArray(left) ? magnitude(left) : left;
   const rightValue = Array.isArray(right) ? magnitude(right) : right;
   return 3 * leftValue + 2 * rightValue;
-}
-
-function print(array) {
-  console.log(util.inspect(array, false, null, true));
 }
 
 const getInput = (fileName) => {
